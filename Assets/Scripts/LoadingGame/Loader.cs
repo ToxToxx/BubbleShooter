@@ -9,6 +9,7 @@ public static class Loader
         LoadingScreen,
         MainMenu, 
         GameScene,
+        AboutScene,
     }
 
     private static Scene _targetScene;
