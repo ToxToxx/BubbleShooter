@@ -6,7 +6,7 @@ public class BallPool : MonoBehaviour
     [SerializeField] private GameObject _ballPrefab;
     [SerializeField] private int _poolSize = 20;
 
-    private readonly Queue<GameObject> pool = new();
+    private readonly Queue<GameObject> _queueOfBalls = new();
 
     private void Start()
     {
@@ -14,15 +14,16 @@ public class BallPool : MonoBehaviour
         {
             GameObject obj = Instantiate(_ballPrefab);
             obj.SetActive(false);
-            pool.Enqueue(obj);
+            _queueOfBalls.Enqueue(obj);
         }
     }
 
+
     public GameObject GetBall(Vector3 position)
     {
-        if (pool.Count > 0)
+        if (_queueOfBalls.Count > 0)
         {
-            GameObject ball = pool.Dequeue();
+            GameObject ball = _queueOfBalls.Dequeue();
             ball.SetActive(true);
             ball.transform.position = position;
             ball.GetComponent<Rigidbody2D>().isKinematic = true;
@@ -39,13 +40,13 @@ public class BallPool : MonoBehaviour
     public void ReturnBall(GameObject ball)
     {
         ball.SetActive(false);
-        pool.Enqueue(ball);
+        _queueOfBalls.Enqueue(ball);
     }
 
     public List<GameObject> GetActiveBalls()
     {
         List<GameObject> activeBalls = new();
-        foreach (GameObject ball in pool)
+        foreach (GameObject ball in _queueOfBalls)
         {
             if (ball.activeSelf)
             {

@@ -1,15 +1,20 @@
 using System.Collections;
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody2D))]
 public class Ball : MonoBehaviour
 {
     private Rigidbody2D _ballRb;
     private bool _isShooting;
+    private BallPool _ballPool;
 
     private void Awake()
     {
         _ballRb = GetComponent<Rigidbody2D>();
+    }
+
+    public void SetPool(BallPool pool)
+    {
+        _ballPool = pool;
     }
 
     public void Shoot(Vector2 direction, float force)
@@ -96,6 +101,6 @@ public class Ball : MonoBehaviour
             time += Time.deltaTime;
             yield return null;
         }
-        Destroy(gameObject);
+        _ballPool.ReturnBall(gameObject);
     }
 }
