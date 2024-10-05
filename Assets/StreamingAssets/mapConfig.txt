@@ -1,0 +1,4 @@
+R W C R W
+G R W B C
+W M R M W
+G W C W M
