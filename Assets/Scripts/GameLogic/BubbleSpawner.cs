@@ -1,13 +1,27 @@
 using UnityEngine;
 using UnityEngine.Pool;
+using UnityEngine.Events;
 
 public class BubbleSpawner : MonoBehaviour
 {
     [SerializeField] private BubbleColors _bubbleColors;
     [SerializeField] private GameObject _bubblePrefab;
-
     [SerializeField] private int _maxBubbles;
+    [SerializeField] private BubbleLauncher _bubbleLauncher;
+
+    public UnityEvent<Bubble> OnBubbleSpawned;
+
     private IObjectPool<Bubble> _bubblePool;
+
+    private void OnEnable()
+    {
+        _bubbleLauncher.OnBubbleLaunched.AddListener(HandleBubbleLaunched);
+    }
+
+    private void OnDisable()
+    {
+        _bubbleLauncher.OnBubbleLaunched.RemoveListener(HandleBubbleLaunched);
+    }
 
     private void Awake()
     {
@@ -18,6 +32,10 @@ public class BubbleSpawner : MonoBehaviour
             OnDestroyBubble,
             maxSize: _maxBubbles
         );
+    }
+
+    private void Start()
+    {
         SpawnBubble();
     }
 
@@ -35,6 +53,8 @@ public class BubbleSpawner : MonoBehaviour
 
         bubble.Initialize(randomColor, randomColorId);
         bubble.gameObject.SetActive(true);
+
+        OnBubbleSpawned?.Invoke(bubble);
     }
 
     private void OnReleaseBubble(Bubble bubble)
@@ -56,5 +76,16 @@ public class BubbleSpawner : MonoBehaviour
     public void ReleaseBubble(Bubble bubble)
     {
         _bubblePool.Release(bubble);
+    }
+
+    private void HandleBubbleLaunched()
+    {
+        StartCoroutine(SpawnBubbleAfterDelay(1f)); 
+    }
+
+    private System.Collections.IEnumerator SpawnBubbleAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        SpawnBubble();
     }
 }
