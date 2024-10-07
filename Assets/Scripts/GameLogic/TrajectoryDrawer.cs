@@ -2,23 +2,23 @@ using UnityEngine;
 
 public class TrajectoryDrawer : MonoBehaviour
 {
-    [SerializeField] private int resolution = 30; // Number of points on the line
-    [SerializeField] private LayerMask collisionMask; // Layer to check for collisions
+    [SerializeField] private int _resolution = 30; 
+    [SerializeField] private LayerMask _collisionMask; 
 
     private LineRenderer _lineRenderer;
 
     private void Awake()
     {
         _lineRenderer = GetComponent<LineRenderer>();
-        _lineRenderer.positionCount = 0; // Start with no points
+        _lineRenderer.positionCount = 0; 
     }
 
     public void DrawTrajectory(Vector2 startPosition, Vector2 initialVelocity)
     {
-        _lineRenderer.positionCount = resolution;
+        _lineRenderer.positionCount = _resolution;
         Vector2 currentPosition = startPosition;
 
-        for (int i = 0; i < resolution; i++)
+        for (int i = 0; i < _resolution; i++)
         {
             Vector2 newPosition = PredictPosition(currentPosition, initialVelocity, i * Time.fixedDeltaTime);
             _lineRenderer.SetPosition(i, newPosition);
@@ -28,21 +28,21 @@ public class TrajectoryDrawer : MonoBehaviour
 
     public void DrawSplitTrajectory(Vector2 startPosition, Vector2 initialVelocity, float scatterFactor)
     {
-        _lineRenderer.positionCount = resolution * 2; // Twice the points for the two trajectories
+        _lineRenderer.positionCount = _resolution * 2; 
 
         // Calculate two split trajectories
         Vector2 splitVelocity1 = Quaternion.Euler(0, 0, scatterFactor) * initialVelocity;
         Vector2 splitVelocity2 = Quaternion.Euler(0, 0, -scatterFactor) * initialVelocity;
 
-        DrawSingleTrajectory(startPosition, splitVelocity1, 0); // Draw first trajectory
-        DrawSingleTrajectory(startPosition, splitVelocity2, resolution); // Draw second trajectory
+        DrawSingleTrajectory(startPosition, splitVelocity1, 0); 
+        DrawSingleTrajectory(startPosition, splitVelocity2, _resolution); 
     }
 
     private void DrawSingleTrajectory(Vector2 startPosition, Vector2 initialVelocity, int startIndex)
     {
         Vector2 currentPosition = startPosition;
 
-        for (int i = 0; i < resolution; i++)
+        for (int i = 0; i < _resolution; i++)
         {
             Vector2 newPosition = PredictPosition(currentPosition, initialVelocity, i * Time.fixedDeltaTime);
             _lineRenderer.SetPosition(startIndex + i, newPosition);
@@ -52,11 +52,11 @@ public class TrajectoryDrawer : MonoBehaviour
 
     private Vector2 PredictPosition(Vector2 currentPosition, Vector2 velocity, float time)
     {
-        return currentPosition + velocity * time + (time * time) * 0.5f * Physics2D.gravity; // Basic projectile motion
+        return currentPosition + velocity * time + (time * time) * 0.5f * Physics2D.gravity; 
     }
 
     public void ClearTrajectory()
     {
-        _lineRenderer.positionCount = 0; // Clear the line
+        _lineRenderer.positionCount = 0;
     }
 }
