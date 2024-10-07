@@ -6,10 +6,13 @@ public class BubbleLauncher : MonoBehaviour
     [SerializeField] private Transform _launchPoint;
     [SerializeField] private float _maxPullDistance = 2f;
     [SerializeField] private float _launchForceMultiplier = 10f;
+    [SerializeField] private TrajectoryDrawer _trajectoryDrawer;
+    [SerializeField] private float scatterFactor = 6f; // Controls the amount of scatter (angle in degrees)
 
     private Bubble _currentBubble;
     private bool _isDragging = false;
     private Camera _mainCamera;
+    private float _pullDistance;
 
     public UnityEvent OnBubbleLaunched;
 
@@ -29,12 +32,12 @@ public class BubbleLauncher : MonoBehaviour
         _currentBubble.transform.position = _launchPoint.position;
 
         var bubbleRb = _currentBubble.GetComponent<Rigidbody2D>();
-        bubbleRb.isKinematic = true; 
+        bubbleRb.isKinematic = true;
     }
 
     private void Update()
     {
-        if (_currentBubble == null) return; 
+        if (_currentBubble == null) return;
         HandleInput();
     }
 
@@ -55,11 +58,13 @@ public class BubbleLauncher : MonoBehaviour
             {
                 Vector2 touchPosition = GetTouchPosition();
                 DragBubble(touchPosition);
+                DrawTrajectoryPreview(); // Draw the trajectory with or without scatter effect
             }
 
             if (Input.GetMouseButtonUp(0))
             {
                 ReleaseBubble();
+                _trajectoryDrawer.ClearTrajectory();
             }
         }
     }
@@ -77,8 +82,8 @@ public class BubbleLauncher : MonoBehaviour
     private void DragBubble(Vector2 touchPosition)
     {
         Vector2 direction = touchPosition - (Vector2)_launchPoint.position;
-        float distance = Mathf.Clamp(direction.magnitude, 0, _maxPullDistance);
-        _currentBubble.transform.position = _launchPoint.position + (Vector3)(direction.normalized * distance);
+        _pullDistance = Mathf.Clamp(direction.magnitude, 0, _maxPullDistance);
+        _currentBubble.transform.position = _launchPoint.position + (Vector3)(direction.normalized * _pullDistance);
     }
 
     private void ReleaseBubble()
@@ -86,18 +91,52 @@ public class BubbleLauncher : MonoBehaviour
         _isDragging = false;
 
         Vector2 launchDirection = (_launchPoint.position - _currentBubble.transform.position).normalized;
-        float pullDistance = Vector2.Distance(_currentBubble.transform.position, _launchPoint.position);
-
         Rigidbody2D bubbleRb = _currentBubble.GetComponent<Rigidbody2D>();
-        bubbleRb.isKinematic = false; 
-        bubbleRb.AddForce(_launchForceMultiplier * pullDistance * launchDirection, ForceMode2D.Impulse);
+        bubbleRb.isKinematic = false;
 
-        if (_currentBubble.TryGetComponent<FixedJoint2D>(out var joint))
+        if (_pullDistance >= _maxPullDistance)
         {
-            joint.enabled = true;
+            // Apply the piercing effect if fully pulled
+            _currentBubble.gameObject.AddComponent<PiercingBubble>();
+
+            // Apply scatter effect with full pull
+            ApplyScatterEffect(bubbleRb, launchDirection);
+        }
+        else
+        {
+            // Normal launch without piercing
+            bubbleRb.AddForce(_launchForceMultiplier * _pullDistance * launchDirection, ForceMode2D.Impulse);
         }
 
         OnBubbleLaunched?.Invoke();
         _currentBubble = null;
+    }
+
+
+    private void ApplyScatterEffect(Rigidbody2D bubbleRb, Vector2 launchDirection)
+    {
+        Vector2 scatterDirection1 = Quaternion.Euler(0, 0, scatterFactor) * launchDirection;
+        Vector2 scatterDirection2 = Quaternion.Euler(0, 0, -scatterFactor) * launchDirection;
+
+        bubbleRb.AddForce(_launchForceMultiplier * _pullDistance * scatterDirection1, ForceMode2D.Impulse);
+        bubbleRb.AddForce(_launchForceMultiplier * _pullDistance * scatterDirection2, ForceMode2D.Impulse);
+
+        Debug.Log("Scatter effect applied: two forces with angle divergence.");
+    }
+
+    private void DrawTrajectoryPreview()
+    {
+        Vector2 dragDirection = _launchPoint.position - _currentBubble.transform.position;
+        float pullDistance = Vector2.Distance(_currentBubble.transform.position, _launchPoint.position);
+
+        Vector2 initialVelocity = _launchForceMultiplier * pullDistance * dragDirection.normalized;
+        if (_pullDistance >= _maxPullDistance)
+        {
+            _trajectoryDrawer.DrawSplitTrajectory(_launchPoint.position, initialVelocity, scatterFactor);
+        }
+        else
+        {
+            _trajectoryDrawer.DrawTrajectory(_launchPoint.position, initialVelocity);
+        }
     }
 }

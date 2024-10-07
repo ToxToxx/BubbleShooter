@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 260575405837566543}
   - component: {fileID: 4329902135977096768}
   - component: {fileID: 8672286389321859093}
+  - component: {fileID: 143291271195513293}
   m_Layer: 7
   m_Name: Bubble
   m_TagString: Untagged
@@ -185,3 +186,22 @@ MonoBehaviour:
     m_Bits: 128
   _minMatchCount: 3
   _proximityRadius: 0.5
+--- !u!114 &143291271195513293
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2394161434300968463}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b1cfa6d8094dac4c9db4f3c439b964d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _wallLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  _bubbleLayer:
+    serializedVersion: 2
+    m_Bits: 128
+  _bubbleMaterial: {fileID: 6200000, guid: 0c645e73c7f61ff4a9bce21d9b1f5b7a, type: 2}
