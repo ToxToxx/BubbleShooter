@@ -7,7 +7,7 @@ public class BubbleLauncher : MonoBehaviour
     [SerializeField] private float _maxPullDistance = 2f;
     [SerializeField] private float _launchForceMultiplier = 10f;
     [SerializeField] private TrajectoryDrawer _trajectoryDrawer;
-    [SerializeField] private float scatterFactor = 6f; // Controls the amount of scatter (angle in degrees)
+    [SerializeField] private float scatterFactor = 6f; 
 
     private Bubble _currentBubble;
     private bool _isDragging = false;
@@ -58,7 +58,7 @@ public class BubbleLauncher : MonoBehaviour
             {
                 Vector2 touchPosition = GetTouchPosition();
                 DragBubble(touchPosition);
-                DrawTrajectoryPreview(); // Draw the trajectory with or without scatter effect
+                DrawTrajectoryPreview(); 
             }
 
             if (Input.GetMouseButtonUp(0))
@@ -96,15 +96,12 @@ public class BubbleLauncher : MonoBehaviour
 
         if (_pullDistance >= _maxPullDistance)
         {
-            // Apply the piercing effect if fully pulled
             _currentBubble.gameObject.AddComponent<PiercingBubble>();
 
-            // Apply scatter effect with full pull
             ApplyScatterEffect(bubbleRb, launchDirection);
         }
         else
         {
-            // Normal launch without piercing
             bubbleRb.AddForce(_launchForceMultiplier * _pullDistance * launchDirection, ForceMode2D.Impulse);
         }
 

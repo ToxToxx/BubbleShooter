@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,6 +15,8 @@ public class BubbleJointController : MonoBehaviour
 
     public delegate void BubbleAttached(GameObject bubble);
     public static event BubbleAttached OnBubbleAttached;
+
+    public static event EventHandler OnBubbleDestroyed;
 
     private void Awake()
     {
@@ -61,6 +64,7 @@ public class BubbleJointController : MonoBehaviour
             foreach (GameObject bubble in matchingBubbles)
             {
                 Destroy(bubble);
+                OnBubbleDestroyed?.Invoke(this, EventArgs.Empty);
             }
 
             Debug.Log("Match found! Bubbles removed.");
