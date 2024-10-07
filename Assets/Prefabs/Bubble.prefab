@@ -13,7 +13,8 @@ GameObject:
   - component: {fileID: 1511769658384845942}
   - component: {fileID: 260575405837566543}
   - component: {fileID: 4329902135977096768}
-  m_Layer: 0
+  - component: {fileID: 8672286389321859093}
+  m_Layer: 7
   m_Name: Bubble
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -105,7 +106,7 @@ Rigidbody2D:
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 0c645e73c7f61ff4a9bce21d9b1f5b7a, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -164,5 +165,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70cf98f970122814785654d8a6239beb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Color: {r: 0, g: 0, b: 0, a: 1}
-  ColorId: 0
+--- !u!114 &8672286389321859093
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2394161434300968463}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4328a6561ff29647b34c63f09a5cac4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _wallLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  _bubbleLayer:
+    serializedVersion: 2
+    m_Bits: 128
+  _minMatchCount: 3
+  _proximityRadius: 0.5
