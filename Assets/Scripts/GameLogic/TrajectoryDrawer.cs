@@ -30,7 +30,6 @@ public class TrajectoryDrawer : MonoBehaviour
     {
         _lineRenderer.positionCount = _resolution * 2; 
 
-        // Calculate two split trajectories
         Vector2 splitVelocity1 = Quaternion.Euler(0, 0, scatterFactor) * initialVelocity;
         Vector2 splitVelocity2 = Quaternion.Euler(0, 0, -scatterFactor) * initialVelocity;
 
