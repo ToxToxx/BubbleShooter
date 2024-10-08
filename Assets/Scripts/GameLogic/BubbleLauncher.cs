@@ -7,9 +7,10 @@ public class BubbleLauncher : MonoBehaviour
     [SerializeField] private float _maxPullDistance = 2f;
     [SerializeField] private float _launchForceMultiplier = 10f;
     [SerializeField] private TrajectoryDrawer _trajectoryDrawer;
-    [SerializeField] private float scatterFactor = 6f; 
+    [SerializeField] private float _scatterFactor = 6f;
 
     private Bubble _currentBubble;
+    private Rigidbody2D _currentBubbleRb;  
     private bool _isDragging = false;
     private Camera _mainCamera;
     private float _pullDistance;
@@ -29,10 +30,9 @@ public class BubbleLauncher : MonoBehaviour
     public void AttachBubble(Bubble bubble)
     {
         _currentBubble = bubble;
+        _currentBubbleRb = _currentBubble.GetComponent<Rigidbody2D>();  
         _currentBubble.transform.position = _launchPoint.position;
-
-        var bubbleRb = _currentBubble.GetComponent<Rigidbody2D>();
-        bubbleRb.isKinematic = true;
+        _currentBubbleRb.isKinematic = true;
     }
 
     private void Update()
@@ -45,28 +45,37 @@ public class BubbleLauncher : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0) && !_isDragging)
         {
-            Vector2 touchPosition = GetTouchPosition();
-            if (IsTouchWithinLaunchArea(touchPosition))
-            {
-                _isDragging = true;
-            }
+            StartDragging();
         }
 
         if (_isDragging)
         {
             if (Input.GetMouseButton(0))
             {
-                Vector2 touchPosition = GetTouchPosition();
-                DragBubble(touchPosition);
-                DrawTrajectoryPreview(); 
+                ContinueDragging();
             }
 
             if (Input.GetMouseButtonUp(0))
             {
                 ReleaseBubble();
-                _trajectoryDrawer.ClearTrajectory();
             }
         }
+    }
+
+    private void StartDragging()
+    {
+        Vector2 touchPosition = GetTouchPosition();
+        if (IsTouchWithinLaunchArea(touchPosition))
+        {
+            _isDragging = true;
+        }
+    }
+
+    private void ContinueDragging()
+    {
+        Vector2 touchPosition = GetTouchPosition();
+        DragBubble(touchPosition);
+        DrawTrajectoryPreview();
     }
 
     private Vector2 GetTouchPosition()
@@ -91,32 +100,29 @@ public class BubbleLauncher : MonoBehaviour
         _isDragging = false;
 
         Vector2 launchDirection = (_launchPoint.position - _currentBubble.transform.position).normalized;
-        Rigidbody2D bubbleRb = _currentBubble.GetComponent<Rigidbody2D>();
-        bubbleRb.isKinematic = false;
+        _currentBubbleRb.isKinematic = false;
 
         if (_pullDistance >= _maxPullDistance)
         {
-            _currentBubble.gameObject.AddComponent<PiercingBubble>();
+            _currentBubble.gameObject.AddComponent<PiercingBubble>();  
 
-            ApplyScatterEffect(bubbleRb, launchDirection);
+            ApplyScatterEffect(_currentBubbleRb, launchDirection); 
         }
         else
         {
-            bubbleRb.AddForce(_launchForceMultiplier * _pullDistance * launchDirection, ForceMode2D.Impulse);
+            _currentBubbleRb.AddForce(_launchForceMultiplier * _pullDistance * launchDirection, ForceMode2D.Impulse);
         }
 
-        OnBubbleLaunched?.Invoke();
+        OnBubbleLaunched?.Invoke();  
         _currentBubble = null;
     }
 
-
     private void ApplyScatterEffect(Rigidbody2D bubbleRb, Vector2 launchDirection)
     {
-        Vector2 scatterDirection1 = Quaternion.Euler(0, 0, scatterFactor) * launchDirection;
-        Vector2 scatterDirection2 = Quaternion.Euler(0, 0, -scatterFactor) * launchDirection;
+        Vector2 scatterDirection1 = Quaternion.Euler(0, 0, _scatterFactor) * launchDirection;
+        Vector2 scatterDirection2 = Quaternion.Euler(0, 0, -_scatterFactor) * launchDirection;
 
-        bubbleRb.AddForce(_launchForceMultiplier * _pullDistance * scatterDirection1, ForceMode2D.Impulse);
-        bubbleRb.AddForce(_launchForceMultiplier * _pullDistance * scatterDirection2, ForceMode2D.Impulse);
+        bubbleRb.AddForce(_launchForceMultiplier * _pullDistance * (scatterDirection1 + scatterDirection2), ForceMode2D.Impulse);
 
         Debug.Log("Scatter effect applied: two forces with angle divergence.");
     }
@@ -127,9 +133,10 @@ public class BubbleLauncher : MonoBehaviour
         float pullDistance = Vector2.Distance(_currentBubble.transform.position, _launchPoint.position);
 
         Vector2 initialVelocity = _launchForceMultiplier * pullDistance * dragDirection.normalized;
+
         if (_pullDistance >= _maxPullDistance)
         {
-            _trajectoryDrawer.DrawSplitTrajectory(_launchPoint.position, initialVelocity, scatterFactor);
+            _trajectoryDrawer.DrawSplitTrajectory(_launchPoint.position, initialVelocity, _scatterFactor);
         }
         else
         {
