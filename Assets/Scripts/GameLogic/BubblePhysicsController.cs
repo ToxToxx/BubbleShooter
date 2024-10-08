@@ -5,7 +5,7 @@ public class BubblePhysicsController : MonoBehaviour
 {
     [SerializeField] private LayerMask _wallLayer;
     [SerializeField] private LayerMask _bubbleLayer;
-    [SerializeField] private PhysicsMaterial2D _bubbleMaterial; 
+    [SerializeField] private PhysicsMaterial2D _bubbleMaterial;
 
     private Collider2D _bubbleCollider;
     private bool _bouncinessDisabled = false;
@@ -14,10 +14,13 @@ public class BubblePhysicsController : MonoBehaviour
     {
         _bubbleCollider = GetComponent<Collider2D>();
 
-        if (_bubbleCollider.sharedMaterial == null)
+        if (_bubbleMaterial == null)
         {
-            _bubbleCollider.sharedMaterial = new PhysicsMaterial2D();
+            Debug.LogWarning("PhysicsMaterial2D is not assigned. Creating a default material.");
+            _bubbleMaterial = new PhysicsMaterial2D("BubbleMaterial") { bounciness = 0.5f };
         }
+
+        _bubbleCollider.sharedMaterial = _bubbleMaterial;
 
         SetBounciness(0.5f);
     }
@@ -42,14 +45,17 @@ public class BubblePhysicsController : MonoBehaviour
 
     private bool IsInLayerMask(GameObject obj, LayerMask layerMask)
     {
-        return (layerMask.value & (1 << obj.layer)) > 0;
+        return ((1 << obj.layer) & layerMask) != 0;
     }
 
     private void SetBounciness(float bounciness)
     {
-        _bubbleCollider.sharedMaterial.bounciness = bounciness;
+        if (_bubbleCollider.sharedMaterial.bounciness != bounciness)
+        {
+            _bubbleCollider.sharedMaterial.bounciness = bounciness;
 
-        _bubbleCollider.enabled = false; 
-        _bubbleCollider.enabled = true; 
+            _bubbleCollider.enabled = false;
+            _bubbleCollider.enabled = true;
+        }
     }
 }
