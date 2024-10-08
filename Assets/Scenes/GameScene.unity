@@ -616,7 +616,7 @@ GameObject:
   - component: {fileID: 727108153}
   - component: {fileID: 727108152}
   m_Layer: 0
-  m_Name: WonText (1)
+  m_Name: ScoreText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -818,7 +818,9 @@ MonoBehaviour:
   _bubbleColors: {fileID: 11400000, guid: 4d496cf0c8b7bba47a16641695ed7cf3, type: 2}
   _bubblePrefab: {fileID: 2394161434300968463, guid: a65c143d036e43347942d723a3bd9242, type: 3}
   _maxBubbles: 20
+  _poolIncrement: 5
   _bubbleLauncher: {fileID: 2091780494}
+  _spawnDelay: 1
   OnBubbleSpawned:
     m_PersistentCalls:
       m_Calls: []
@@ -1429,8 +1431,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1563759310}
   - component: {fileID: 1563759309}
+  - component: {fileID: 1563759311}
   m_Layer: 0
-  m_Name: LevelManager
+  m_Name: LevelandScoreManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1466,6 +1469,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1563759311
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1563759308}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db902725166b83240934878a10532881, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1707561779
 GameObject:
   m_ObjectHideFlags: 0

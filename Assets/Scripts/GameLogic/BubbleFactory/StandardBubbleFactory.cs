@@ -1,10 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class StandardBubbleFactory : IBubbleFactory
 {
-    private GameObject _bubblePrefab;
+    private readonly GameObject _bubblePrefab;
 
     public StandardBubbleFactory(GameObject bubblePrefab)
     {

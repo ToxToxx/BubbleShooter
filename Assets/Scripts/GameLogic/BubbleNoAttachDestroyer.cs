@@ -44,6 +44,8 @@ public class BubbleNoAttachDestroyer : MonoBehaviour
             _rigidbody2D.velocity = new Vector2(0, -_fallSpeed);
 
             Debug.Log("Bubble destroyed because it is not attached to others.");
+
+            ScoreManager.Instance.AddScore(5);
         }
     }
 

@@ -65,6 +65,8 @@ public class BubbleJointController : MonoBehaviour
             {
                 Destroy(bubble);
                 OnBubbleDestroyed?.Invoke(this, EventArgs.Empty);
+
+                ScoreManager.Instance.AddScore(10);
             }
 
             Debug.Log("Match found! Bubbles removed.");
