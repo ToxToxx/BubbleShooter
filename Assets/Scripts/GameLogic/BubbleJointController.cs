@@ -8,7 +8,7 @@ public class BubbleJointController : MonoBehaviour
     [SerializeField] private LayerMask _wallLayer;
     [SerializeField] private LayerMask _bubbleLayer;
     [SerializeField] private int _minMatchCount = 3;
-    [SerializeField] private float _proximityRadius = 0.5f; 
+    [SerializeField] private float _proximityRadius = 0.5f;
 
     private Rigidbody2D _rigidbody2D;
     private bool _isConnected = false;
@@ -38,14 +38,14 @@ public class BubbleJointController : MonoBehaviour
 
     private bool IsInLayerMask(GameObject obj, LayerMask layerMask)
     {
-        return (layerMask.value & (1 << obj.layer)) > 0;
+        return ((1 << obj.layer) & layerMask) != 0;
     }
 
     private void AttachToBubble()
     {
         _rigidbody2D.velocity = Vector2.zero;
         _rigidbody2D.angularVelocity = 0f;
-        _rigidbody2D.isKinematic = true; 
+        _rigidbody2D.isKinematic = true;
 
         _isConnected = true;
         Debug.Log("Bubble connected to another!");
@@ -76,7 +76,6 @@ public class BubbleJointController : MonoBehaviour
         List<GameObject> matchingBubbles = new();
         char startColor = startBubble.GetComponent<Bubble>().ColorId;
 
-        Collider2D[] nearbyBubbles = Physics2D.OverlapCircleAll(startBubble.transform.position, _proximityRadius, _bubbleLayer);
         HashSet<GameObject> visited = new();
         Queue<GameObject> queue = new();
 
@@ -92,7 +91,7 @@ public class BubbleJointController : MonoBehaviour
             {
                 matchingBubbles.Add(current);
 
-                nearbyBubbles = Physics2D.OverlapCircleAll(current.transform.position, _proximityRadius, _bubbleLayer);
+                Collider2D[] nearbyBubbles = Physics2D.OverlapCircleAll(current.transform.position, _proximityRadius, _bubbleLayer);
                 foreach (var nearbyBubbleCollider in nearbyBubbles)
                 {
                     GameObject nearbyBubble = nearbyBubbleCollider.gameObject;
