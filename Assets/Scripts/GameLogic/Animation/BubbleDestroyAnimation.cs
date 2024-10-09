@@ -7,11 +7,13 @@ public class BubbleDestroyAnimation : MonoBehaviour
     private void OnEnable()
     {
         BubbleJointController.OnBubblesMatchedForAnimation += HandleBubblesMatchedForAnimation;
+        PiercingBubble.OnBubblePierced += HandleBubbleMatchedForAnimation;
     }
 
     private void OnDisable()
     {
         BubbleJointController.OnBubblesMatchedForAnimation -= HandleBubblesMatchedForAnimation;
+        PiercingBubble.OnBubblePierced -= HandleBubbleMatchedForAnimation;
     }
 
     private void HandleBubblesMatchedForAnimation(List<GameObject> bubbles)
@@ -20,6 +22,11 @@ public class BubbleDestroyAnimation : MonoBehaviour
         {
             StartCoroutine(PlayDestroyAnimation(bubble));
         }
+    }
+
+    private void HandleBubbleMatchedForAnimation(GameObject bubble)
+    {
+        StartCoroutine(PlayDestroyAnimation(bubble));
     }
 
     private IEnumerator PlayDestroyAnimation(GameObject bubble)
