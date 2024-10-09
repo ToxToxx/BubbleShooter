@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class ScoreManager : MonoBehaviour
 {
+    private const string BEST_SCORE_PREFS = "BestScore";
     public static ScoreManager Instance;
 
     private int _currentScore;
@@ -45,12 +46,12 @@ public class ScoreManager : MonoBehaviour
 
     private void SaveBestScore()
     {
-        PlayerPrefs.SetInt("BestScore", _highScore);
+        PlayerPrefs.SetInt(BEST_SCORE_PREFS, _highScore);
         PlayerPrefs.Save();
     }
 
     private void LoadBestScore()
     {
-        _highScore = PlayerPrefs.GetInt("BestScore", 0); 
+        _highScore = PlayerPrefs.GetInt(BEST_SCORE_PREFS, 0); 
     }
 }
