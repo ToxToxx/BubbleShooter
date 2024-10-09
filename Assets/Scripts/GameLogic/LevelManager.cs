@@ -11,22 +11,29 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private int _initialTopRowCount;
     [SerializeField] private int _winBubblesGoal;
 
+
     public static event EventHandler OnGameWon;
 
     private void OnEnable()
     {
         BubbleMatrixLoader.OnBubblesCreated += OnBubblesCreated;
         BubbleMatrixLoader.OnTopRowBubblesCreated += OnTopRowBubblesCreated;  
-        BubbleJointController.OnBubbleDestroyed += Bubble_OnBubbleDestroyed;
     }
 
     private void OnDisable()
     {
         BubbleMatrixLoader.OnBubblesCreated -= OnBubblesCreated;
         BubbleMatrixLoader.OnTopRowBubblesCreated -= OnTopRowBubblesCreated;
-        BubbleJointController.OnBubbleDestroyed -= Bubble_OnBubbleDestroyed;
     }
 
+    private void Update()
+    {
+        RemoveDestroyedTopRowBubbles();
+        if (_topRowBubbles.Count <= _winBubblesGoal)
+        {
+            GameWon();
+        }
+    }
     private void OnBubblesCreated(List<GameObject> bubbles)
     {
         _allBubbles = bubbles;
@@ -42,17 +49,6 @@ public class LevelManager : MonoBehaviour
         _topRowBubbles = topRowBubbles;  
         _initialTopRowCount = _topRowBubbles.Count;
         _winBubblesGoal = Mathf.CeilToInt(_initialTopRowCount * _winPercentage);
-    }
-
-    private void Bubble_OnBubbleDestroyed(object sender, System.EventArgs e)
-    {
-        Debug.Log("Calculating Bubbles");
-        RemoveDestroyedTopRowBubbles();
-
-        if (_topRowBubbles.Count <= _winBubblesGoal)
-        {
-            GameWon();
-        }
     }
 
     private void GameWon()

@@ -1562,8 +1562,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _fallSpeed: 2
   _winPercentage: 0.3
+  _initialTopRowCount: 0
   _winBubblesGoal: 0
-  _delayWinCount: 3
 --- !u!4 &1563759310
 Transform:
   m_ObjectHideFlags: 0
