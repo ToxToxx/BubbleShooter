@@ -17,6 +17,7 @@ public class BubbleJointController : MonoBehaviour
     public static event BubbleAttached OnBubbleAttached;
 
     public static event EventHandler OnBubbleDestroyed;
+    public static event Action<List<GameObject>> OnBubblesMatchedForAnimation;
 
     private void Awake()
     {
@@ -61,9 +62,11 @@ public class BubbleJointController : MonoBehaviour
 
         if (matchingBubbles.Count >= _minMatchCount)
         {
+            OnBubblesMatchedForAnimation?.Invoke(matchingBubbles);
+
             foreach (GameObject bubble in matchingBubbles)
             {
-                Destroy(bubble);
+                //Destroy(bubble);
                 OnBubbleDestroyed?.Invoke(this, EventArgs.Empty);
 
                 ScoreManager.Instance.AddScore(10);
