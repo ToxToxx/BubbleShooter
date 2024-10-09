@@ -11,6 +11,8 @@ public class BubbleSpawner : MonoBehaviour
     [SerializeField] private int _poolIncrement = 5;
     [SerializeField] private BubbleLauncher _bubbleLauncher;
     [SerializeField] private float _spawnDelay = 1f;
+    [SerializeField] private Transform _nextBubblePosition;
+    [SerializeField] private SpriteRenderer _nextBubblePreview; // Превью следующего бабла
 
     public UnityEvent<Bubble> OnBubbleSpawned;
     public static Action OnBubbleHadSpawned;
@@ -19,7 +21,8 @@ public class BubbleSpawner : MonoBehaviour
     private IBubbleFactory _bubbleFactory;
     private Transform _transform;
 
-    private int _activeBubbles = 0;  
+    private int _activeBubbles = 0;
+    private int _nextBubbleIndex = 0; // Индекс для следующего бабла  
 
     private void OnEnable()
     {
@@ -48,25 +51,33 @@ public class BubbleSpawner : MonoBehaviour
 
     private void Start()
     {
-        SpawnBubble();
+        PrepareNextBubble();  
+        SpawnBubble();        
     }
 
     private void OnGetBubble(Bubble bubble)
     {
-        int randomIndex = UnityEngine.Random.Range(0, _bubbleColors.Color.Length);
-        bubble.Initialize(_bubbleColors.Color[randomIndex], _bubbleColors.ColorId[randomIndex]);
+        bubble.Initialize(_bubbleColors.Color[_nextBubbleIndex], _bubbleColors.ColorId[_nextBubbleIndex]);
         bubble.gameObject.SetActive(true);
 
-        _activeBubbles++;     
+        _activeBubbles++;
 
         OnBubbleSpawned?.Invoke(bubble);
         OnBubbleHadSpawned?.Invoke();
+
+        PrepareNextBubble();
+    }
+
+    private void PrepareNextBubble()
+    {
+        _nextBubbleIndex = UnityEngine.Random.Range(0, _bubbleColors.Color.Length);
+        _nextBubblePreview.color = _bubbleColors.Color[_nextBubbleIndex];
     }
 
     private void OnReleaseBubble(Bubble bubble)
     {
         bubble.gameObject.SetActive(false);
-        _activeBubbles--; 
+        _activeBubbles--;
     }
 
     private void OnDestroyBubble(Bubble bubble)
@@ -76,7 +87,7 @@ public class BubbleSpawner : MonoBehaviour
 
     public void SpawnBubble()
     {
-        EnsurePoolSize();  
+        EnsurePoolSize();
         Bubble bubble = _bubblePool.Get();
         bubble.transform.position = _transform.position;
     }
@@ -102,7 +113,7 @@ public class BubbleSpawner : MonoBehaviour
         if (_activeBubbles >= _maxBubbles)
         {
             Debug.LogWarning("Max bubbles reached, increasing pool size.");
-            _maxBubbles += _poolIncrement;  
+            _maxBubbles += _poolIncrement;
 
             _bubblePool = new ObjectPool<Bubble>(
                 _bubbleFactory.CreateBubble,
