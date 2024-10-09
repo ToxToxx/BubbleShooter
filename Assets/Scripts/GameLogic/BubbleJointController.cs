@@ -66,7 +66,6 @@ public class BubbleJointController : MonoBehaviour
 
             foreach (GameObject bubble in matchingBubbles)
             {
-                //Destroy(bubble);
                 OnBubbleDestroyed?.Invoke(this, EventArgs.Empty);
 
                 ScoreManager.Instance.AddScore(10);
