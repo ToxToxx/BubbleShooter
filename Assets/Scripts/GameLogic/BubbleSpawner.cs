@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Pool;
 using UnityEngine.Events;
+using System;
 
 public class BubbleSpawner : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public class BubbleSpawner : MonoBehaviour
     [SerializeField] private float _spawnDelay = 1f;
 
     public UnityEvent<Bubble> OnBubbleSpawned;
+    public static Action OnBubbleHadSpawned;
 
     private IObjectPool<Bubble> _bubblePool;
     private IBubbleFactory _bubbleFactory;
@@ -51,13 +53,14 @@ public class BubbleSpawner : MonoBehaviour
 
     private void OnGetBubble(Bubble bubble)
     {
-        int randomIndex = Random.Range(0, _bubbleColors.Color.Length);
+        int randomIndex = UnityEngine.Random.Range(0, _bubbleColors.Color.Length);
         bubble.Initialize(_bubbleColors.Color[randomIndex], _bubbleColors.ColorId[randomIndex]);
         bubble.gameObject.SetActive(true);
 
         _activeBubbles++;     
 
         OnBubbleSpawned?.Invoke(bubble);
+        OnBubbleHadSpawned?.Invoke();
     }
 
     private void OnReleaseBubble(Bubble bubble)
