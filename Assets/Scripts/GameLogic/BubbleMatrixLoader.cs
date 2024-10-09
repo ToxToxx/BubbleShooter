@@ -22,6 +22,9 @@ public class BubbleMatrixLoader : MonoBehaviour
     public delegate void BubblesCreated(List<GameObject> bubbles);
     public static event BubblesCreated OnBubblesCreated;
 
+    public delegate void TopRowBubblesCreated(List<GameObject> topRowBubbles);  // Новый ивент для передачи верхней строки
+    public static event TopRowBubblesCreated OnTopRowBubblesCreated;
+
     private void Start()
     {
         _matrixFilePath = Path.Combine(Application.dataPath, "Scripts/GameLogic/bubbleMatrix.json");
@@ -59,6 +62,7 @@ public class BubbleMatrixLoader : MonoBehaviour
         }
 
         List<GameObject> createdBubbles = new();
+        List<GameObject> topRowBubbles = new();  // Список для верхней строки пузырей
 
         Vector2 matrixOffset = CalculateMatrixOffset();
 
@@ -80,6 +84,12 @@ public class BubbleMatrixLoader : MonoBehaviour
                     bubble.Initialize(bubbleColor, colorId);
 
                     createdBubbles.Add(bubbleInstance);
+
+                    // Если это верхний ряд, добавляем пузырь в список верхней строки
+                    if (row == 0)
+                    {
+                        topRowBubbles.Add(bubbleInstance);
+                    }
                 }
                 else
                 {
@@ -88,7 +98,9 @@ public class BubbleMatrixLoader : MonoBehaviour
             }
         }
 
+        // Отправляем данные о созданных пузырях и верхней строке
         OnBubblesCreated?.Invoke(createdBubbles);
+        OnTopRowBubblesCreated?.Invoke(topRowBubbles);  // Отправляем верхний ряд
     }
 
     private Vector2 CalculateBubblePosition(int row, int col)

@@ -8,7 +8,7 @@ public class LevelManager : MonoBehaviour
     private List<GameObject> _allBubbles = new();
     private List<GameObject> _topRowBubbles = new();  
     [SerializeField] private float _winPercentage = 0.3f;
-    private int _initialTopRowCount;
+    [SerializeField] private int _initialTopRowCount;
     [SerializeField] private int _winBubblesGoal;
 
     public static event EventHandler OnGameWon;
@@ -16,26 +16,32 @@ public class LevelManager : MonoBehaviour
     private void OnEnable()
     {
         BubbleMatrixLoader.OnBubblesCreated += OnBubblesCreated;
+        BubbleMatrixLoader.OnTopRowBubblesCreated += OnTopRowBubblesCreated;  
         BubbleJointController.OnBubbleDestroyed += Bubble_OnBubbleDestroyed;
     }
 
     private void OnDisable()
     {
         BubbleMatrixLoader.OnBubblesCreated -= OnBubblesCreated;
+        BubbleMatrixLoader.OnTopRowBubblesCreated -= OnTopRowBubblesCreated;
         BubbleJointController.OnBubbleDestroyed -= Bubble_OnBubbleDestroyed;
     }
 
     private void OnBubblesCreated(List<GameObject> bubbles)
     {
         _allBubbles = bubbles;
-        FindTopRowBubbles();  
-        _initialTopRowCount = _topRowBubbles.Count;
-        _winBubblesGoal = Mathf.CeilToInt(_initialTopRowCount * _winPercentage);
 
         foreach (var bubble in _allBubbles)
         {
             bubble.transform.SetParent(transform);
         }
+    }
+
+    private void OnTopRowBubblesCreated(List<GameObject> topRowBubbles)
+    {
+        _topRowBubbles = topRowBubbles;  
+        _initialTopRowCount = _topRowBubbles.Count;
+        _winBubblesGoal = Mathf.CeilToInt(_initialTopRowCount * _winPercentage);
     }
 
     private void Bubble_OnBubbleDestroyed(object sender, System.EventArgs e)
@@ -80,32 +86,8 @@ public class LevelManager : MonoBehaviour
         Debug.Log("Remaining bubbles are falling.");
     }
 
-    private void FindTopRowBubbles()
-    {
-        float maxY = float.MinValue;
-        foreach (var bubble in _allBubbles)
-        {
-            float bubbleY = bubble.transform.position.y;
-            if (bubbleY > maxY)
-            {
-                maxY = bubbleY;
-            }
-        }
-
-        foreach (var bubble in _allBubbles)
-        {
-            if (Mathf.Approximately(bubble.transform.position.y, maxY))
-            {
-                _topRowBubbles.Add(bubble);
-            }
-        }
-
-        _initialTopRowCount = _topRowBubbles.Count;
-    }
-
     private void RemoveDestroyedTopRowBubbles()
     {
-
         _topRowBubbles.RemoveAll(bubble => bubble == null);
     }
 }
