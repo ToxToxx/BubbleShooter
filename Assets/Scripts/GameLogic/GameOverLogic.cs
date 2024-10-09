@@ -37,4 +37,9 @@ public class GameOverLogic : MonoBehaviour
     {
         OnGameLoose?.Invoke(this, EventArgs.Empty);
     }
+
+    public int GetLeftBubbles()
+    {
+        return _spawnedBubblesTillGameOver;
+    }
 }
