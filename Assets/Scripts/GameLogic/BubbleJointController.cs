@@ -13,6 +13,8 @@ public class BubbleJointController : MonoBehaviour
     private Rigidbody2D _rigidbody2D;
     private bool _isConnected = false;
 
+    private Collider2D[] _nearbyBubbles = new Collider2D[10]; 
+
     public delegate void BubbleAttached(GameObject bubble);
     public static event BubbleAttached OnBubbleAttached;
 
@@ -26,14 +28,16 @@ public class BubbleJointController : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (IsInLayerMask(collision.gameObject, _wallLayer))
+        if (!_isConnected && IsInLayerMask(collision.gameObject, _wallLayer | _bubbleLayer))
         {
-            Debug.Log("Bounced off the wall!");
-        }
-
-        if (!_isConnected && IsInLayerMask(collision.gameObject, _bubbleLayer))
-        {
-            AttachToBubble();
+            if (IsInLayerMask(collision.gameObject, _wallLayer))
+            {
+                Debug.Log("Bounced off the wall!");
+            }
+            else if (IsInLayerMask(collision.gameObject, _bubbleLayer))
+            {
+                AttachToBubble();
+            }
         }
     }
 
@@ -52,7 +56,6 @@ public class BubbleJointController : MonoBehaviour
         Debug.Log("Bubble connected to another!");
 
         OnBubbleAttached?.Invoke(gameObject);
-
         CheckForMatches();
     }
 
@@ -80,8 +83,8 @@ public class BubbleJointController : MonoBehaviour
         List<GameObject> matchingBubbles = new();
         char startColor = startBubble.GetComponent<Bubble>().ColorId;
 
-        HashSet<GameObject> visited = new();
-        Queue<GameObject> queue = new();
+        HashSet<GameObject> visited = new(); 
+        Queue<GameObject> queue = new(); 
 
         queue.Enqueue(startBubble);
         visited.Add(startBubble);
@@ -95,10 +98,10 @@ public class BubbleJointController : MonoBehaviour
             {
                 matchingBubbles.Add(current);
 
-                Collider2D[] nearbyBubbles = Physics2D.OverlapCircleAll(current.transform.position, _proximityRadius, _bubbleLayer);
-                foreach (var nearbyBubbleCollider in nearbyBubbles)
+                int count = Physics2D.OverlapCircleNonAlloc(current.transform.position, _proximityRadius, _nearbyBubbles, _bubbleLayer);
+                for (int i = 0; i < count; i++)
                 {
-                    GameObject nearbyBubble = nearbyBubbleCollider.gameObject;
+                    GameObject nearbyBubble = _nearbyBubbles[i].gameObject;
                     if (!visited.Contains(nearbyBubble))
                     {
                         queue.Enqueue(nearbyBubble);

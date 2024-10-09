@@ -8,6 +8,6 @@ public class BubblesLeftText : MonoBehaviour
 
     private void Update()
     {
-        _bubblesLeftText.text = _gameOverLogic.GetLeftBubbles().ToString();
+        _bubblesLeftText.text = (_gameOverLogic.GetLeftBubbles() - 1).ToString();
     }
 }
