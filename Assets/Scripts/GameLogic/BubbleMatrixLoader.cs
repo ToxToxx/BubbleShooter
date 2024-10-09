@@ -62,7 +62,7 @@ public class BubbleMatrixLoader : MonoBehaviour
         }
 
         List<GameObject> createdBubbles = new();
-        List<GameObject> topRowBubbles = new();  // Список для верхней строки пузырей
+        List<GameObject> topRowBubbles = new(); 
 
         Vector2 matrixOffset = CalculateMatrixOffset();
 
@@ -85,7 +85,6 @@ public class BubbleMatrixLoader : MonoBehaviour
 
                     createdBubbles.Add(bubbleInstance);
 
-                    // Если это верхний ряд, добавляем пузырь в список верхней строки
                     if (row == 0)
                     {
                         topRowBubbles.Add(bubbleInstance);
@@ -98,9 +97,8 @@ public class BubbleMatrixLoader : MonoBehaviour
             }
         }
 
-        // Отправляем данные о созданных пузырях и верхней строке
         OnBubblesCreated?.Invoke(createdBubbles);
-        OnTopRowBubblesCreated?.Invoke(topRowBubbles);  // Отправляем верхний ряд
+        OnTopRowBubblesCreated?.Invoke(topRowBubbles); 
     }
 
     private Vector2 CalculateBubblePosition(int row, int col)

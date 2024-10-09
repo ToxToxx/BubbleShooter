@@ -1,6 +1,4 @@
-using System;
 using UnityEngine;
-using UnityEngine.Events;
 
 [RequireComponent(typeof(SpriteRenderer))]
 public class Bubble : MonoBehaviour

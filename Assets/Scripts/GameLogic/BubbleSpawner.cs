@@ -12,7 +12,7 @@ public class BubbleSpawner : MonoBehaviour
     [SerializeField] private BubbleLauncher _bubbleLauncher;
     [SerializeField] private float _spawnDelay = 1f;
     [SerializeField] private Transform _nextBubblePosition;
-    [SerializeField] private SpriteRenderer _nextBubblePreview; // Превью следующего бабла
+    [SerializeField] private SpriteRenderer _nextBubblePreview;
 
     public UnityEvent<Bubble> OnBubbleSpawned;
     public static Action OnBubbleHadSpawned;
@@ -22,7 +22,7 @@ public class BubbleSpawner : MonoBehaviour
     private Transform _transform;
 
     private int _activeBubbles = 0;
-    private int _nextBubbleIndex = 0; // Индекс для следующего бабла  
+    private int _nextBubbleIndex = 0; 
 
     private void OnEnable()
     {
