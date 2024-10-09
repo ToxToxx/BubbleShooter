@@ -10,7 +10,8 @@ public class BubbleLauncher : MonoBehaviour
     [SerializeField] private float _scatterFactor = 6f;
 
     private Bubble _currentBubble;
-    private Rigidbody2D _currentBubbleRb;  
+    private Rigidbody2D _currentBubbleRb;
+    private Collider2D _currentBubbleCollider;  
     private bool _isDragging = false;
     private Camera _mainCamera;
     private float _pullDistance;
@@ -30,9 +31,12 @@ public class BubbleLauncher : MonoBehaviour
     public void AttachBubble(Bubble bubble)
     {
         _currentBubble = bubble;
-        _currentBubbleRb = _currentBubble.GetComponent<Rigidbody2D>();  
+        _currentBubbleRb = _currentBubble.GetComponent<Rigidbody2D>();
+        _currentBubbleCollider = _currentBubble.GetComponent<Collider2D>();  
         _currentBubble.transform.position = _launchPoint.position;
+
         _currentBubbleRb.isKinematic = true;
+        _currentBubbleCollider.enabled = false;  
     }
 
     private void Update()
@@ -101,19 +105,20 @@ public class BubbleLauncher : MonoBehaviour
 
         Vector2 launchDirection = (_launchPoint.position - _currentBubble.transform.position).normalized;
         _currentBubbleRb.isKinematic = false;
+        _currentBubbleCollider.enabled = true;
 
         if (_pullDistance >= _maxPullDistance)
         {
             _currentBubble.gameObject.AddComponent<PiercingBubble>();  
 
-            ApplyScatterEffect(_currentBubbleRb, launchDirection); 
+            ApplyScatterEffect(_currentBubbleRb, launchDirection);
         }
         else
         {
             _currentBubbleRb.AddForce(_launchForceMultiplier * _pullDistance * launchDirection, ForceMode2D.Impulse);
         }
 
-        OnBubbleLaunched?.Invoke();  
+        OnBubbleLaunched?.Invoke(); 
         _currentBubble = null;
     }
 
